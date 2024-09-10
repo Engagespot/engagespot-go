@@ -18,12 +18,30 @@ type NotificationService struct {
 func (s *NotificationService) Send(notification *Notification) (*SendResponse, error) {
 	url := fmt.Sprintf("%s/notifications", s.client.baseURL)
 
-	reqBody, err := json.Marshal(map[string]interface{}{
-		"notification": notification,
-	})
+	// Create a new struct to represent the request body
+	requestBody := struct {
+		Notification struct {
+			Workflow Workflow `json:"workflow"`
+		} `json:"notification"`
+		Data   map[string]interface{} `json:"data"`
+		SendTo SendTo                 `json:"sendTo"`
+	}{
+		Notification: struct {
+			Workflow Workflow `json:"workflow"`
+		}{
+			Workflow: notification.Workflow,
+		},
+		Data:   notification.Data,
+		SendTo: notification.SendTo,
+	}
+
+	reqBody, err := json.Marshal(requestBody)
 	if err != nil {
 		return nil, fmt.Errorf("error marshaling request body: %v", err)
 	}
+
+	// Debug print
+	fmt.Printf("Debug - Request body: %s\n", string(reqBody))
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBody))
 	if err != nil {
@@ -41,7 +59,8 @@ func (s *NotificationService) Send(notification *Notification) (*SendResponse, e
 		return nil, fmt.Errorf("error reading response body: %v", err)
 	}
 
-	if resp.StatusCode != http.StatusOK {
+	// Check if status code is in the 2xx range
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return nil, fmt.Errorf("API request failed with status code %d: %s", resp.StatusCode, string(body))
 	}
 

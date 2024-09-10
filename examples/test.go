@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/engagespot/engagespot-go"
+	"github.com/Engagespot/engagespot-go/engagespot"
 )
 
 func main() {
@@ -23,18 +23,14 @@ func main() {
 	// Create a notification
 	notification := &engagespot.Notification{
 		Workflow: engagespot.Workflow{
-			Identifier: "test-workflow",
+			Identifier: "plan-expiry-notification",
 		},
 		Data: map[string]interface{}{
 			"message": "This is a test notification",
 			"url":     "https://example.com",
 		},
 		SendTo: engagespot.SendTo{
-			Recipients: []string{"user123"},
-		},
-		Options: map[string]interface{}{
-			"priority": "high",
-			"icon":     "https://example.com/icon.png",
+			Recipients: []string{"user-001"},
 		},
 	}
 
