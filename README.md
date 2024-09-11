@@ -29,11 +29,10 @@ Workflow: engagespot.Workflow{
 Identifier: "your-workflow-identifier",
 },
 Data: map[string]interface{}{
-"message": "This is a test notification",
-"url": "https://example.com",
+"key": "value"
 },
 SendTo: engagespot.SendTo{
-Recipients: []string{"user-001"},
+Recipients: []string{"user-id-001"},
 },
 }
 response, err := client.Notifications.Send(notification)
@@ -41,4 +40,34 @@ if err != nil {
 log.Fatalf("Error sending notification: %v", err)
 }
 fmt.Printf("Notification sent successfully. Request ID: %s\n", response.RequestID)
+```
+
+### Full working example
+
+```go
+package main
+
+import (
+	"log"
+	"fmt"
+	"github.com/Engagespot/engagespot-go/engagespot"
+)
+
+func main(){
+	client := engagespot.NewClient("YOUR_API_KEY", "YOUR_API_SECRET")
+
+	notification := &engagespot.Notification{
+		Workflow: engagespot.Workflow{
+		Identifier: "workflow-identifier",
+		},
+		SendTo: engagespot.SendTo{
+		Recipients: []string{"user-id-001"},
+		},
+		}
+		response, err := client.Notifications.Send(notification)
+		if err != nil {
+		log.Fatalf("Error sending notification: %v", err)
+		}
+		fmt.Printf("Notification sent successfully. Request ID: %s\n", response.RequestID)
+}
 ```
